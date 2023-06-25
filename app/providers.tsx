@@ -21,6 +21,7 @@ import {
   goerli,
 } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import "@rainbow-me/rainbowkit/styles.css";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -34,7 +35,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [publicProvider()]
 );
 
-const projectId = "YOUR_PROJECT_ID";
+const projectId = "7597c96b2b399d0c823babdac2b228a0";
 
 const { wallets } = getDefaultWallets({
   appName: "RainbowKit demo",
