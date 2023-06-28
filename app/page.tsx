@@ -9,38 +9,30 @@ import {
 } from "wagmi";
 import { counterABI } from "../deployedContracts/generated";
 import { useEffect, useState } from "react";
+import { Log, LogTopic } from "viem";
 
 const contractConfig = {
   address: "0x3656c2f6368c06649081a74fa85874f1645602f4",
   abi: counterABI,
 } as const;
 
+
 function Page() {
   const { isConnected } = useAccount();
-  const [number, setNumber] = useState<number>(0);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState<Log[]>([]);
 
   const unwatch = useContractEvent({
     ...contractConfig,
     eventName: "NumberIncremented",
     listener(log) {
       console.log(log);
-      setLogs((logs) => [...logs, "NumberIncremented"]);
     },
   });
 
-  const { data } = useContractRead({
+  const { data: getNumber } = useContractRead({
     ...contractConfig,
     functionName: "getNumber",
   });
-
-  useEffect(() => {
-    setNumber(Number(data?.toString() || "0"));
-
-    return () => {
-      unwatch?.();
-    };
-  }, [logs]);
 
   const { config } = usePrepareContractWrite({
     ...contractConfig,
@@ -52,7 +44,7 @@ function Page() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <ConnectButton />
-      <h1 className="p-10 text-6xl text-gray-800">{number}</h1>
+      <h1 className="p-10 text-6xl text-gray-800">{getNumber?.toString()}</h1>
       {isConnected && (
         <>
           <button
@@ -64,8 +56,8 @@ function Page() {
         </>
       )}
       <div>
-        {logs.map((log, i) => (
-          <div key={i}>{log} called!</div>
+        {logs.map((log) => (
+          <div key={log.transactionHash}>{log.transactionHash}</div>
         ))}
       </div>
     </div>
