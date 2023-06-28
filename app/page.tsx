@@ -12,39 +12,62 @@ import { useEffect, useState } from "react";
 import { Log, LogTopic } from "viem";
 
 const contractConfig = {
-  address: "0x3656c2f6368c06649081a74fa85874f1645602f4",
+  address: "0xd607596aD942973261b239e2BD3903cbE06acFD8",
   abi: counterABI,
 } as const;
 
-
 function Page() {
   const { isConnected } = useAccount();
-  const [logs, setLogs] = useState<Log[]>([]);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [currentNumber, setCurrentNumber] = useState<bigint | undefined>(undefined); // new state variable
 
   const unwatch = useContractEvent({
     ...contractConfig,
-    eventName: "NumberIncremented",
+    eventName: "NumberChanged",
     listener(log) {
       console.log(log);
+      setLogs((currentLogs) => [...currentLogs, log]);
+      setCurrentNumber(log[0].args.newNumber); // update currentNumber with newNumber from event
     },
   });
 
-  const { data: getNumber } = useContractRead({
+  const { data: initialNumber } = useContractRead({
     ...contractConfig,
     functionName: "getNumber",
   });
 
-  const { config } = usePrepareContractWrite({
+  useEffect(() => {
+    if (initialNumber != undefined) {
+      setCurrentNumber(initialNumber);
+    }
+  }, [initialNumber]);
+
+  const { config: incrementConfig } = usePrepareContractWrite({
     ...contractConfig,
     functionName: "increment",
   });
 
-  const { write: increment } = useContractWrite(config);
+  const { write: increment } = useContractWrite(incrementConfig);
+
+  const { config:decrementConfig } = usePrepareContractWrite({
+    ...contractConfig,
+    functionName: "decrement",
+  });
+
+  const { write: decrement } = useContractWrite(decrementConfig);
+
+  useEffect(() => {
+    return () => {
+      unwatch?.();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <ConnectButton />
-      <h1 className="p-10 text-6xl text-gray-800">{getNumber?.toString()}</h1>
+      <h1 className="p-10 text-6xl text-gray-800">
+        {currentNumber?.toString()}
+      </h1>
       {isConnected && (
         <>
           <button
@@ -53,11 +76,17 @@ function Page() {
           >
             Increment
           </button>
+          <button
+            onClick={() => decrement?.()}
+            className="mt-4 px-4 py-2 text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50"
+          >
+            Decrement
+          </button>
         </>
       )}
       <div>
-        {logs.map((log) => (
-          <div key={log.transactionHash}>{log.transactionHash}</div>
+        {logs.map((log, i) => (
+          <div key={i}>{log[0].transactionHash}</div>
         ))}
       </div>
     </div>
