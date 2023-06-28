@@ -27,7 +27,6 @@ function Page() {
     ...contractConfig,
     eventName: "NumberChanged",
     listener(log) {
-      console.log(log);
       setLogs((currentLogs) => [...currentLogs, log]);
       setCurrentNumber(log[0].args.newNumber); // update currentNumber with newNumber from event
     },
