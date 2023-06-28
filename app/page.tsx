@@ -80,52 +80,47 @@ function Page() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
       <ConnectButton />
-      <h1 className="p-10 text-6xl text-gray-800">
-        {currentNumber?.toString()}
-      </h1>
+      <h1 className="p-10 text-9xl">{currentNumber?.toString()}</h1>
       {isConnected && (
         <div>
-          {/* insert form below to set a number function: setNumber */}
-
           <form
-            className="flex items-center justify-center gap-7"
+            className="flex flex-col items-center justify-center gap-3"
             onSubmit={(e) => {
               e.preventDefault();
-              //setNumber?.();
             }}
           >
             <input
               type="number"
               value={newNumber.toString()}
               onChange={(e) => setNewNumber(BigInt(e.target.value))}
-              className="w-1/4 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-green-500 focus:outline-none focus:ring"
+              className="w-64 px-2 py-1 text-2xl bg-white border-2 border-black focus:border-green-500 focus:outline-none focus:ring-0"
             />
             <button
               type="submit"
               onClick={() => setNumber?.()}
-              className=" px-2 py-2 text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+              className="w-48 h-12 px-4 py-2 text-2xl bg-black text-white border-2 border-black hover:bg-gray-700 focus:outline-none focus:ring-0"
             >
               Set Number
             </button>
           </form>
-          <div className="flex gap-7">
+          <div className="flex gap-3 mt-3">
             <button
               onClick={() => increment?.()}
-              className="mt-4 px-4 py-4 text-white bg-green-500 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
+              className="w-48 h-12 text-2xl bg-black text-white border-2 border-black rounded-none hover:bg-gray-800 focus:outline-none focus:ring-0"
             >
               Increment
             </button>
             <button
               onClick={() => decrement?.()}
-              className="mt-4 px-4 py-4 text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50"
+              className="w-48 h-12 text-2xl bg-black text-white border-2 border-black rounded-none hover:bg-gray-800 focus:outline-none focus:ring-0"
             >
               Decrement
             </button>
             <button
               onClick={() => reset?.()}
-              className="mt-4 px-4 py-4 text-white bg-gray-500 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
+              className="w-48 h-12 text-2xl bg-black text-white border-2 border-black rounded-none hover:bg-gray-800 focus:outline-none focus:ring-0"
             >
               Reset
             </button>
@@ -134,9 +129,11 @@ function Page() {
       )}
       <div>
         {logs.map((log, i) => (
-          <div key={i}>
-            <div>Tx hash:{log[0].transactionHash}</div>
-            <div>New number:{log[0].args.newNumber.toString()}</div>
+          <div key={i} className="mt-4">
+            <div className="text-lg">Tx hash:{log[0].transactionHash}</div>
+            <div className="text-lg">
+              New number:{log[0].args.newNumber.toString()}
+            </div>
           </div>
         ))}
       </div>
